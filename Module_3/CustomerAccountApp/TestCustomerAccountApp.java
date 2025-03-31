@@ -1,3 +1,5 @@
+package CustomerAccountApp;
+
 import java.util.Scanner;
 
 public class TestCustomerAccountApp {

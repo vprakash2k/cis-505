@@ -1,3 +1,5 @@
+package CustomerAccountApp;
+
 public class CustomerDB {
     public static Customer getCustomer(int id) {
         if (id == 1007) {

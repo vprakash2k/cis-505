@@ -1,3 +1,5 @@
+package CustomerAccountApp;
+
 public class Customer {
     // Private fields
     private String name;
