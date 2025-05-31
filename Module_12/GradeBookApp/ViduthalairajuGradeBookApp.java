@@ -29,10 +29,14 @@ public class ViduthalairajuGradeBookApp extends Application {
         gradeComboBox.getItems().addAll("A", "B", "C", "D", "F");
         gradeComboBox.setValue("A");
 
-
         Button saveButton = new Button("Save");
+        saveButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;"); // Green
+
         Button clearButton = new Button("Clear");
+        clearButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;"); // Red
+
         Button viewGradesButton = new Button("View Grades");
+        viewGradesButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;"); // Blue
 
         saveButton.setOnAction(e -> saveGrade());
         clearButton.setOnAction(e -> clearForm());
@@ -57,7 +61,6 @@ public class ViduthalairajuGradeBookApp extends Application {
 
         HBox buttonBox = new HBox(10, saveButton, clearButton, viewGradesButton);
 
-        // TableView setup
         gradeTable = new TableView<>();
         gradeTable.setPrefHeight(200);
 
@@ -136,7 +139,6 @@ public class ViduthalairajuGradeBookApp extends Application {
                     }
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
