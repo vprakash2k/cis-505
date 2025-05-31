@@ -15,6 +15,7 @@ public class ViduthalairajuGradeBookApp extends Application {
     private ComboBox<String> gradeComboBox;
     private TableView<Student> gradeTable;
 
+
     public static void main(String[] args) {
         launch(args);
     }
