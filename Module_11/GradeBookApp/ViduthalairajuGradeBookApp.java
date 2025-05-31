@@ -12,8 +12,7 @@ public class ViduthalairajuGradeBookApp extends Application {
     private static final String FILE_NAME = "grades.csv";
     private TextField firstNameField, lastNameField, courseField;
     private ComboBox<String> gradeComboBox;
-    private TextArea gradeDisplayArea;
-    private List<Student> students;
+    private TableView<Student> gradeTable;
 
     public static void main(String[] args) {
         launch(args);
@@ -21,8 +20,6 @@ public class ViduthalairajuGradeBookApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        students = new ArrayList<>();
-
         firstNameField = new TextField();
         lastNameField = new TextField();
         courseField = new TextField();
@@ -34,10 +31,6 @@ public class ViduthalairajuGradeBookApp extends Application {
         Button saveButton = new Button("Save");
         Button clearButton = new Button("Clear");
         Button viewGradesButton = new Button("View Grades");
-
-        gradeDisplayArea = new TextArea();
-        gradeDisplayArea.setEditable(false);
-        gradeDisplayArea.setPrefHeight(200);
 
         saveButton.setOnAction(e -> saveGrade());
         clearButton.setOnAction(e -> clearForm());
@@ -61,11 +54,30 @@ public class ViduthalairajuGradeBookApp extends Application {
         formGrid.add(gradeComboBox, 1, 3);
 
         HBox buttonBox = new HBox(10, saveButton, clearButton, viewGradesButton);
-        VBox layout = new VBox(15, formGrid, buttonBox, gradeDisplayArea);
+
+        // TableView setup
+        gradeTable = new TableView<>();
+        gradeTable.setPrefHeight(200);
+
+        TableColumn<Student, String> firstNameCol = new TableColumn<>("First Name");
+        firstNameCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getFirstName()));
+
+        TableColumn<Student, String> lastNameCol = new TableColumn<>("Last Name");
+        lastNameCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getLastName()));
+
+        TableColumn<Student, String> courseCol = new TableColumn<>("Course");
+        courseCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getCourse()));
+
+        TableColumn<Student, String> gradeCol = new TableColumn<>("Grade");
+        gradeCol.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getGrade()));
+
+        gradeTable.getColumns().addAll(firstNameCol, lastNameCol, courseCol, gradeCol);
+
+        VBox layout = new VBox(15, formGrid, buttonBox, gradeTable);
         layout.setStyle("-fx-padding: 20;");
 
-        Scene scene = new Scene(layout, 450, 400);
-        primaryStage.setTitle("Grade Book App");
+        Scene scene = new Scene(layout, 600, 450);
+        primaryStage.setTitle("Prakash Viduthalairaju Grade Book App");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -82,13 +94,13 @@ public class ViduthalairajuGradeBookApp extends Application {
         }
 
         Student student = new Student(firstName, lastName, course, grade);
-        students.add(student);
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
-            if (new File(FILE_NAME).length() == 0) {
+            File file = new File(FILE_NAME);
+            if (file.length() == 0) {
                 bufferedWriter.write("firstName,lastName,course,grade\n");
             }
-            bufferedWriter.write(student.getFirstName() + "," + student.getLastName() + "," + student.getCourse() + "," + student.getGrade() + "\n");
+            bufferedWriter.write(String.join(",", firstName, lastName, course, grade) + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,16 +116,20 @@ public class ViduthalairajuGradeBookApp extends Application {
     }
 
     private void viewGrades() {
-        gradeDisplayArea.clear();
-        for (Student student : students) {
-            gradeDisplayArea.appendText(student.toString() + "\n");
-        }
+        gradeTable.getItems().clear();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
             String line;
+            boolean isFirstLine = true;
             while ((line = reader.readLine()) != null) {
-                if (!line.startsWith("firstName")) {
-                    gradeDisplayArea.appendText(line + "\n");
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue;
+                }
+                String[] parts = line.split(",");
+                if (parts.length == 4) {
+                    Student student = new Student(parts[0], parts[1], parts[2], parts[3]);
+                    gradeTable.getItems().add(student);
                 }
             }
         } catch (IOException e) {

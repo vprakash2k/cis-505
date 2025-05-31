@@ -4,9 +4,7 @@ public class Student {
     private String course;
     private String grade;
 
-
-    public Student() {
-    }
+    public Student() {}
 
     public Student(String firstName, String lastName, String course, String grade) {
         this.firstName = firstName;
